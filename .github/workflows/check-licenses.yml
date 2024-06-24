@@ -32,8 +32,8 @@ jobs:
       - name: Clone License Check Repo
         uses: actions/checkout@v4
         with:
-          repository: eclipse-velocitas/license-check
-          ref: v1.2.3
+          repository: SoftwareDefinedVehicle/license-check
+          ref: fix_python_issues
           path: .github/actions/license-check
 
       - name: Run License Checker
