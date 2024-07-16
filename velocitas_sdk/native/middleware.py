@@ -30,7 +30,7 @@ class NativeMiddleware(Middleware):
         self.type = MiddlewareType.NATIVE
         self.service_locator = NativeServiceLocator()
 
-        if os.getenv("SDV_NO_MQTT"):
+        if os.getenv("SDV_NO_MQTT") == "true":
             self.pubsub_client = None
         else:
             _address = self.service_locator.get_service_location("mqtt")
