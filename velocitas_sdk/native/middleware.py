@@ -12,6 +12,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import os
+
 from urllib.parse import urlparse
 
 from velocitas_sdk.base import Middleware, MiddlewareType
@@ -28,10 +30,13 @@ class NativeMiddleware(Middleware):
         self.type = MiddlewareType.NATIVE
         self.service_locator = NativeServiceLocator()
 
-        _address = self.service_locator.get_service_location("mqtt")
-        _port = urlparse(_address).port
-        _hostname = urlparse(_address).hostname
-        self.pubsub_client = MqttClient(_port, _hostname)
+        if os.getenv("SDV_NO_MQTT"):
+            self.pubsub_client = None
+        else:
+            _address = self.service_locator.get_service_location("mqtt")
+            _port = urlparse(_address).port
+            _hostname = urlparse(_address).hostname
+            self.pubsub_client = MqttClient(_port, _hostname)
 
     async def start(self):
         pass

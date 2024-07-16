@@ -88,12 +88,13 @@ class VehicleApp:
 
         methods = inspect.getmembers(self)
 
-        for method in methods:
-            if hasattr(method[1], "subscribeTopic"):
-                callback = method[1]
-                topic = method[1].subscribeTopic
+        if self.pubsub_client is not None:
+            for method in methods:
+                if hasattr(method[1], "subscribeTopic"):
+                    callback = method[1]
+                    topic = method[1].subscribeTopic
 
-                await self.pubsub_client.subscribe_topic(topic, callback)
+                    await self.pubsub_client.subscribe_topic(topic, callback)
 
         await config.middleware.wait_until_ready()
 
@@ -108,7 +109,8 @@ class VehicleApp:
                 except Exception as ex:
                     logger.exception(ex)
         try:
-            asyncio.create_task(self.pubsub_client.run())
+            if self.pubsub_client is not None:
+                asyncio.create_task(self.pubsub_client.run())
             await self.on_start()
             while True:
                 await asyncio.sleep(1)
@@ -125,4 +127,5 @@ class VehicleApp:
         await self.publish_event(topic, data)
 
     async def publish_event(self, topic: str, data: str):
-        await self.pubsub_client.publish_event(topic, data)
+        if self.pubsub_client is not None:
+            await self.pubsub_client.publish_event(topic, data)
